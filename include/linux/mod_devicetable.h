@@ -629,4 +629,17 @@ struct mcb_device_id {
 	kernel_ulong_t driver_data;
 };
 
+#define SOUNDWIRE_NAME_SIZE       64
+#define SOUNDWIRE_MODULE_PREFIX "sdw:"
+
+struct sdw_slave_id {
+	char name[SOUNDWIRE_NAME_SIZE];
+	kernel_ulong_t driver_data;      /* Data private to the driver */
+};
+
+struct sdw_master_id {
+	char name[SOUNDWIRE_NAME_SIZE];
+	kernel_ulong_t driver_data;     /* Data private to the driver */
+};
+
 #endif /* LINUX_MOD_DEVICETABLE_H */
