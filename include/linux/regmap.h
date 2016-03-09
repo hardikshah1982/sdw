@@ -28,6 +28,7 @@ struct regmap;
 struct regmap_range_cfg;
 struct regmap_field;
 struct snd_ac97;
+struct sdw_slave;
 
 /* An enum of all the supported cache types */
 enum regcache_type {
@@ -332,6 +333,8 @@ int regmap_attach_dev(struct device *dev, struct regmap *map,
 				 const struct regmap_config *config);
 struct regmap *regmap_init_i2c(struct i2c_client *i2c,
 			       const struct regmap_config *config);
+struct regmap *regmap_init_slave(struct sdw_slave *sdw,
+			       const struct regmap_config *config);
 struct regmap *regmap_init_spi(struct spi_device *dev,
 			       const struct regmap_config *config);
 struct regmap *regmap_init_spmi_base(struct spmi_device *dev,
@@ -349,6 +352,8 @@ struct regmap *devm_regmap_init(struct device *dev,
 				void *bus_context,
 				const struct regmap_config *config);
 struct regmap *devm_regmap_init_i2c(struct i2c_client *i2c,
+				    const struct regmap_config *config);
+struct regmap *devm_regmap_init_sdw(struct sdw_slave *sdw,
 				    const struct regmap_config *config);
 struct regmap *devm_regmap_init_spi(struct spi_device *dev,
 				    const struct regmap_config *config);
