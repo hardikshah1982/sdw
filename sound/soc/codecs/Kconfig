@@ -20,6 +20,7 @@ config SND_SOC_ALL_CODECS
 	select SND_SOC_AD1836 if SPI_MASTER
 	select SND_SOC_AD193X_SPI if SPI_MASTER
 	select SND_SOC_AD193X_I2C if I2C
+	select SND_SOC_SVFPGA_I2C if I2C
 	select SND_SOC_AD1980 if SND_SOC_AC97_BUS
 	select SND_SOC_AD73311
 	select SND_SOC_ADAU1373 if I2C
@@ -338,6 +339,22 @@ config SND_SOC_CQ0093VC
 config SND_SOC_CS35L32
 	tristate "Cirrus Logic CS35L32 CODEC"
 	depends on I2C
+
+config SND_SOC_SVFPGA
+	tristate "Intel SVFPGA Codec"
+	depends on I2C
+	depends on SDW
+
+config SND_SOC_SVFPGA_SDW
+	tristate "Intel SVFPGA Codec - SDW"
+	depends on SDW
+	select SND_SOC_SVFPGA
+	select REGMAP_SDW
+
+config SND_SOC_SVFPGA_I2C
+	tristate "Intel SVFPGA Codec - I2C"
+	depends on I2C
+	select SND_SOC_SVFPGA
 
 config SND_SOC_CS42L51
 	tristate
