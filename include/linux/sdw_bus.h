@@ -1070,6 +1070,16 @@ void sdw_slave_driver_unregister(struct sdw_slave_driver *drv);
 int sdw_slave_transfer(struct sdw_master *mstr, struct sdw_msg *msg, int num);
 
 /**
+ * sdw_slave_xfer_bra_block: Transfer the data block using the BTP/BRA
+ *				protocol.
+ * @mstr: SoundWire Master Master
+ * @block: Data block to be transferred.
+ */
+int sdw_slave_xfer_bra_block(struct sdw_master *mstr,
+				struct sdw_bra_block *block);
+
+
+/**
  * sdw_alloc_stream_tag: Allocate stream_tag for each audio stream
  *			between SoundWire Masters and Slaves.
  *			(Multiple Masters and Slave in case of
