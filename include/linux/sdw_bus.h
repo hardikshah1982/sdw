@@ -591,6 +591,11 @@ struct sdw_slave_driver {
 			int port, int ch_mask, int bank);
 	int (*handle_post_port_unprepare)(struct sdw_slave *swdev,
 			int port, int ch_mask, int bank);
+	int (*pre_clk_stp_prep)(struct sdw_slave *sdwdev,
+			enum sdw_clk_stop_mode mode, bool stop);
+	int (*post_clk_stp_prep)(struct sdw_slave *sdwdev,
+			enum sdw_clk_stop_mode mode, bool stop);
+	enum sdw_clk_stop_mode (*get_dyn_clk_stp_mod)(struct sdw_slave *swdev);
 	const struct sdw_slave_id *id_table;
 };
 #define to_sdw_slave_driver(d) container_of(d, struct sdw_slave_driver, driver)
@@ -1328,8 +1333,39 @@ void sdw_put_master(struct sdw_master *mstr);
 #define module_sdw_slave_driver(__sdw_slave_driver) \
 	module_driver(__sdw_slave_driver, sdw_slave_driver_register, \
 			sdw_slave_driver_unregister)
+/**
+ * sdw_prepare_for_clock_change: Prepare all the Slaves for clock stop or
+ *		clock start. Prepares Slaves based on what they support
+ *		simplified clock stop or normal clock stop based on
+ *		their capabilities registered to slave driver.
+ * @mstr: Master handle for which clock state has to be changed.
+ * @stop: Prepare for starting or stopping the clock, 1 if preparing for
+ *		clock stop, 0 if un-prepare after clock has resumed.
+ */
+int sdw_prepare_for_clock_change(struct sdw_master *mstr, bool stop);
 
+/**
+ * sdw_wait_for_slave_enumeration: Wait till all the slaves are enumerated.
+ *			Typicall this function is called by master once
+ *			it resumes its clock. This function waits in
+ *			loop for about 2Secs before all slaves gets enumerated
+ *			This function returns immediately if the clock
+ *			stop mode0 was entered earlier, where slave need
+ *			not re-enumerated.
+ *
+ * @mstr: Master handle
+ * @slave: Slave handle
+ */
+int sdw_wait_for_slave_enumeration(struct sdw_master *mstr,
+			struct sdw_slave *slave);
 
+/**
+ * sdw_stop_clock: Stop the clock. This function broadcasts the SCP_CTRL
+ *			register with clock_stop_now bit set.
+ * @mstr: Master handle for which clock has to be stopped.
+ */
+
+int sdw_stop_clock(struct sdw_master *mstr);
 
 /* Return the adapter number for a specific adapter */
 static inline int sdw_master_id(struct sdw_master *mstr)
