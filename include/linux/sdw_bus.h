@@ -207,7 +207,6 @@ struct sdw_slave;
 struct sdw_msg;
 struct sdw_bra_block;
 struct sdw_mstr_driver;
-struct sdw_impl_def_intr_status;
 
 /**
  * struct port_audio_mode_properties: Audio properties for the Port
@@ -472,6 +471,40 @@ struct sdw_bus_params {
 	int bank;
 };
 
+/** struct sdw_portn_intr_stat: Implementation defined interrupt
+ *			status for slave ports other than port 0
+ *
+ * num:	Port number for which status is reported.
+ * status: status of the implementation defined interrupts
+ */
+struct sdw_portn_intr_stat {
+	int num;
+	u8 status;
+};
+
+/** struct sdw_impl_def_intr_stat: Implementation define interrupt
+ *			status for slave.
+ *
+ * control_port_stat: Implementation defined interrupt status mask
+ *			for control ports. Mask Bits are exactly
+ *			same as defined in MIPI Spec 1.0
+ * port0_stat:	Implementation defined interrupt status mask
+ *			for port 0. Mask bits are exactly same as defined
+ *			in MIPI spec 1.0.
+ * num_ports:		Number of ports in slave other than port 0.
+ * portn_stat:	Implementation defined status for slave ports
+ *			other than port0. Mask bits are exactly same
+ *			as defined in MIPI spec 1.0. Array size is
+ *			same as number of ports in Slave.
+ */
+struct sdw_impl_def_intr_stat {
+	u8 control_port_stat;
+	u8 port0_stat;
+	int num_ports;
+	struct sdw_portn_intr_stat *portn_stat;
+};
+
+
 /**
  * struct sdw_slave_driver: Manage SoundWire generic/Slave device driver
  * @driver_type: To distinguish between master and slave driver. Set and
@@ -547,7 +580,7 @@ struct sdw_slave_driver {
 	int (*resume)(struct sdw_slave *swdev);
 	struct device_driver driver;
 	int (*handle_impl_def_interrupts)(struct sdw_slave *swdev,
-		struct sdw_impl_def_intr_status intr_stat);
+		struct sdw_impl_def_intr_stat *intr_status);
 	int (*handle_bus_changes)(struct sdw_slave *swdev,
 			struct sdw_bus_params *params);
 	int (*handle_pre_port_prepare)(struct sdw_slave *swdev,
@@ -737,39 +770,6 @@ struct sdw_transport_params {
 	int hstop;		/*  DPN_HCtrl  */
 	int blockpackingmode;	/* DPN_BlockCtrl3 */
 	int lanecontrol;	/* DPN_LaneCtrl */
-};
-
-
-/** struct sdw_portn_intr_status: Implementation defined interrupt
- *			status for slave ports other than port 0
- * num: Port number for which status is reported.
- * status: status of the implementation defined interrupts
- */
-struct sdw_portn_intr_status {
-	int num;
-	int status;
-};
-
-/** struct impl_def_status: Implementation define interrupt
- *			status for slave.
- * control_port_status: Implementation defined interrupt status mask
- *			for control ports. Mask Bits are exactly
- *			same as defined in MIPI Spec 1.0
- * port0_status:	Implementation defined interrupt status mask
- *			for port 0. Mask bits are exactly same as defined
- *			in MIPI spec 1.0.
- * num_ports:		Number of ports in slave other than port 0.
- * portn_status:	Implementation defined status for slave ports
- *			other than port0. Mask bits are exactly same
- *			as defined in MIPI spec 1.0. Array size is
- *			same as number of ports in Slave.
- */
-
-struct sdw_impl_def_intr_status {
-	int control_port_status;
-	int port0_status;
-	int num_ports;
-	struct sdw_portn_intr_status *portn_status;
 };
 
 /** struct sdw_prepare_ch: Prepare/Un-prepare the Data Port channel.
